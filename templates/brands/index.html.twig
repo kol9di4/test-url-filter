@@ -10,7 +10,6 @@
 
 <div class="example-wrapper">
     {% for brand in brands %}
-
         <a href="{{ path('app_brand_full', {'brand':brand['brand']}) }} "><h3>{{ brand['brand'] }}</h3></a>
     {% endfor %}
 {% endblock %}

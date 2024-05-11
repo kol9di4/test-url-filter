@@ -15,43 +15,63 @@ class ProductRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Product::class);
     }
-    public function findAllBrands(){
+    public function findAllBrands() : array{
         return $this->createQueryBuilder('p')
             ->select('p.brand')
             ->distinct('p.brand')
             ->getQuery()
             ->getResult();
     }
-    public function findAllProductsInBrand($brand,$array = []){
+    public function findAllColors() : array{
         return $this->createQueryBuilder('p')
-            ->where('p.brand = :brand')
-            ->setParameter('brand', $brand)
+            ->select('p.color')
+            ->distinct('p.color')
             ->getQuery()
             ->getResult();
     }
+    public function findAllMaterials() : array{
+        return $this->createQueryBuilder('p')
+            ->select('p.material')
+            ->distinct('p.material')
+            ->getQuery()
+            ->getResult();
+    }
+    public function findMaxPrice() : int{
+        return $this->createQueryBuilder('p')
+            ->select('MAX(p.price)')
+            ->getQuery()
+            ->getResult()[0][1];
+    }
+    public function findAllProductsInBrand(string $brand="", array $colors=[], int $minPrice = 0, int $maxPrice = 0, array $materials = [], int $availability = -1): array {
+        $query = $this->createQueryBuilder('p');
+        if (!empty($colors)) {
+            $strQuery = "(p.color = '$colors[0]'";
+            for ($i = 1; $i < count($colors); $i++) {
+                $strQuery.="or p.color = '$colors[$i]'";
+            }
+            $strQuery.=")";
+            $query->andWhere($strQuery);
+        }
 
-    //    /**
-    //     * @return Product[] Returns an array of Product objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('p.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+        if(!empty($materials))
+        {
+            $strQuery = "(p.material = '$materials[0]'";
+            for($i=1;$i<count($materials);$i++){
+                 $strQuery.="or p.material = '$materials[$i]'";
+            }
+            $strQuery.=")";
+            $query->andWhere($strQuery);
+        }
+        $query->andWhere("p.brand = '$brand'");
+        if($minPrice !== 0)
+            $query->andWhere("p.price > $minPrice");
+        if($maxPrice !== 0)
+            $query->andWhere("p.price < $maxPrice");
+        if($availability !== -1){
+            $query->andWhere("p.availability = $availability");
+        }
+        $query->expr()->andX();
 
-    //    public function findOneBySomeField($value): ?Product
-    //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        return $query->getQuery()->getResult();
+    }
 }

@@ -13,7 +13,7 @@
 
     {% for product in products %}
         <div class="product">
-            <h3>{{ product.getProduct }}</h3>
+            <h3>{{ product.getProduct }} | {{ product.getBrand }}</h3>
             <p>{{ product.getPrice }} | {{ product.getMaterial }} | {{ product.getColor }} | {{ product.isAvailability }}</p>
         </div>
     {% endfor %}
