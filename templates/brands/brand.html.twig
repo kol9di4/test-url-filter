@@ -8,13 +8,123 @@
     .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
 </style>
 
-<div class="example-wrapper">
-    {{ brand }}
+    <div class="container my-5">
+        <h1 class="display-2">{{ brand }}</h1>
+        <hr>
+        <div class="row">
+            <div class="filter-section col-3 p-3">
+                <h3>Filters:</h3>
+                <hr>
+                <form action="">
 
-    {% for product in products %}
-        <div class="product">
-            <h3>{{ product.getProduct }} | {{ product.getBrand }}</h3>
-            <p>{{ product.getPrice }} | {{ product.getMaterial }} | {{ product.getColor }} | {{ product.isAvailability }}</p>
+                    <div class="colors my-2">
+                        <h5>Colors:</h5>
+                        <input class="form-check-input" type="checkbox" value="" id="colorCheckCheckedAll" name="" checked>
+                        <label class="form-check-label h6" for="colorCheckCheckedAll">
+                            All
+                        </label>
+                        <div class="filters ps-3">
+                            {% for key,color in colors %}
+                                <div class="form-check">
+                                    <input class="form-check-input check-color" type="checkbox" value="" id="colorCheckChecked{{ key }}" name="{{ color['color'] }}" checked>
+                                    <label class="form-check-label" for="colorCheckChecked{{ key }}">
+                                        {{ color['color'] }}
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="materials my-2">
+                        <h5>Materials:</h5>
+                        <input class="form-check-input" type="checkbox" value="" id="materialCheckCheckedAll" name="" checked>
+                        <label class="form-check-label h6" for="materialCheckCheckedAll">
+                            All
+                        </label>
+                        <div class="filters  ps-3">
+                            {% for key,material in materials %}
+                                <div class="form-check">
+                                    <input class="form-check-input check-material" type="checkbox" value="" id="materialCheckChecked{{ key }}" name="{{ material['material'] }}" checked>
+                                    <label class="form-check-label" for="materialCheckChecked{{ key }}">
+                                        {{ material['material'] }}
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="price my-2">
+                        <h5>Price:</h5>
+                        <div class="filters ps-3">
+                            <div class="min-price">
+                                <label for="minPriceRange" class="form-label">Min 0:</label>
+                                <input type="range" class="form-range" min="0" max="{{ maxPrice }}" id="minPriceRange" value="0">
+                            </div>
+                            <div class="max-price">
+                                <label for="maxPriceRange" class="form-label">Max {{ maxPrice }}:</label>
+                                <input type="range" class="form-range" min="0" max="{{ maxPrice }}" id="maxPriceRange" value="{{ maxPrice }}">
+                            </div>
+                        </div>
+                    </div>
+
+{#                    <div class="availability my-2">#}
+{#                        <h5>Availability:</h5>#}
+{#                        <div class="filters ps-3">#}
+{#                            <div class="form-check">#}
+{#                                <input class="form-check-input" type="checkbox" value="" id="avaCheckChecked" name="availability" checked>#}
+{#                                <label class="form-check-label" for="avaCheckChecked">#}
+{#                                    Availability#}
+{#                                </label>#}
+{#                            </div>#}{#$('#maxPriceRange').val()#}
+{#                        </div>#}
+{#                    </div>#}
+
+                    <button type="submit" class="btn btn-primary btn-sm mt-4" id="submitFilters">Submit filters</button>
+
+                </form>
+            </div>
+            <div class="cards-section row col-9 align-content-start">
+                {% for product in products %}
+                    <div class="col-4 bg-light">
+                    <div class="card mb-3">
+                        <div id="carousel{{ product.getId }}" class="carousel slide">
+                            <div class="carousel-inner overflow-hidden"  style="height: 200px;">
+                                <div class="carousel-item active mh-100">
+                                    <img src="https://w.forfun.com/fetch/03/03f8cd3f6796daaacc1fe43ffb7704b7.jpeg"
+                                         class="d-block" alt="...">
+                                </div>
+                                <div class="carousel-item mh-100">
+                                    <img src="https://w.forfun.com/fetch/56/5656d35727009cabea6ce79973a9702c.jpeg"
+                                         class="d-block" alt="...">
+                                </div>
+                                <div class="carousel-item mh-100">
+                                    <img src="https://w.forfun.com/fetch/03/03f8cd3f6796daaacc1fe43ffb7704b7.jpeg"
+                                         class="d-block" alt="...">
+                                </div>
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carousel{{ product.getId }}"
+                                    data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Предыдущий</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carousel{{ product.getId }}"
+                                    data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Следующий</span>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="mt-0">{{ product.getProduct }}</h3>
+                                <h5>Price: {{ product.getPrice }}</h5>
+                                <h5>Material: {{ product.getMaterial }}</h5>
+                                <h5>Color: {{ product.getColor }}</h5>
+                                <h5>Availability: {{ product.isAvailability ? 'yes': 'no'}}</h5>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
         </div>
-    {% endfor %}
+    </div>
+
 {% endblock %}

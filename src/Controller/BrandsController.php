@@ -28,19 +28,23 @@ class BrandsController extends AbstractController
         ]);
     }
     #[Route('/catalog/{brand}', name: 'app_brand_full', methods: ['GET'])]
-    public function brand_full(string $brand, Request $request): Response
+    public function brand_full(string $brand = 'Vans', Request $request): Response
     {
+//        dd($this->productRepository->findAllColors());
         $this->brand = $brand;
         $products = (new ProductFilter($this->productRepository, $this->brand, $request->query->all()))
             ->getProducts();
         return $this->render('brands/brand.html.twig', [
             'brand' => $this->brand,
             'products' => $products,
+            'colors' => $this->productRepository->findAllColors(),
+            'materials' => $this->productRepository->findAllMaterials(),
+            'maxPrice' => $this->productRepository->findMaxPrice(),
         ]);
     }
 
-    #[Route('/catalog/download', name: 'app_brand_download')]
-    public function download(): Response
+    #[Route('/catalog/{brand}/download', name: 'app_brand_download', methods: ['GET'])]
+    public function download(string $brand): Response
     {
         $products = $this->productRepository->findAllProductsInBrand($this->brand);
         return $this->render('brands/brand.html.twig', [

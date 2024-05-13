@@ -1,3 +1,7 @@
-body {
-    background-color: skyblue;
+.carousel-item{
+    height: 200px;
+}
+.carousel-item img {
+    width: auto;
+    height: 100%;
 }
