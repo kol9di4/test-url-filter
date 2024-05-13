@@ -52,7 +52,7 @@ $(function (){
             maxPrice    : $('#maxPriceRange').val(),
             // availability : 'sometoken'
         };
-        document.location.href = '/catalog/converse'+'?'+$.param(obj);
-        // alert();
+
+        document.location.href = location.pathname+'?'+$.param(obj);
     });
 })
