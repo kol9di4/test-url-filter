@@ -37,8 +37,7 @@ class UploadCSVController extends AbstractController
                         $entityManager->flush();
                     }
                     fclose($handle);
-                    return $this->redirectToRoute('app_upload_csv');
-
+                    return $this->redirectToRoute('app');
                 }
             }
             else{
