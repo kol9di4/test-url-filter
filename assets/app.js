@@ -55,4 +55,21 @@ $(function (){
 
         document.location.href = location.pathname+'?'+$.param(obj);
     });
+    $(document).on('click', '#download-csv', function(e) {
+        // e.preventDefault();
+        var obj = {
+            colors    : selectHighlightedInputs('.check-color'),
+            materials    : selectHighlightedInputs('.check-material'),
+            minPrice    : $('#minPriceRange').val(),
+            maxPrice    : $('#maxPriceRange').val(),
+            // availability : 'sometoken'
+        };
+        // $.ajax({
+        //     url: location.pathname+'/download',
+        //     method: 'POST',
+        //     data: obj,
+        // });
+
+        document.location.href = location.pathname+'/download?'+$.param(obj);
+    });
 })
