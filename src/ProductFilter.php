@@ -46,5 +46,4 @@ class ProductFilter
         if(isset($maxPrice))
             $this->maxPrice = $maxPrice;
     }
-
 }

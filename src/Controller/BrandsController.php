@@ -35,15 +35,21 @@ class BrandsController extends AbstractController
         return $this->redirectToRoute('app');
     }
 
-    #[Route('/catalog/{brand}', name: 'app_brand_full', methods: ['GET'])]
+    #[Route('/catalog/{brand}', name: 'app_brand_full', methods: ['GET','POST'])]
     public function brand_full(string $brand, Request $request): Response
     {
         $isBrandExists = count($this->productRepository->isBrandsExists($brand))>0;
         if (!$isBrandExists) {
             return $this->redirectToRoute('app');
         }
-        $products = (new ProductFilter($this->productRepository, $brand, $request->query->all()))
-            ->getProducts();
+        $products = (new ProductFilter($this->productRepository, $brand, $request->query->all()))->getProducts();
+        if ($request->isMethod('POST')) {
+            $products = (new ProductFilter($this->productRepository, $brand, $request->request->all()))->getProducts();
+//            dd($products);
+            return $this->render('brands/products.html.twig', [
+                'products' => $products,
+            ]);
+        }
         return $this->render('brands/brand.html.twig', [
             'brand' => $brand,
             'products' => $products,

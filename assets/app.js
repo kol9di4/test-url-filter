@@ -45,31 +45,38 @@ $(function (){
 
     $(document).on('click', '#submitFilters', function(e) {
         e.preventDefault();
-        var obj = {
+        var data = {
             colors    : selectHighlightedInputs('.check-color'),
             materials    : selectHighlightedInputs('.check-material'),
             minPrice    : $('#minPriceRange').val(),
             maxPrice    : $('#maxPriceRange').val(),
             // availability : 'sometoken'
         };
-
-        document.location.href = location.pathname+'?'+$.param(obj);
+        window.history.replaceState(null, document.title, '?'+$.param(data))
+        $.ajax({
+            url: location.pathname,
+            method: 'POST',
+            data: data,
+            success: function (response) {
+                if (response!= null){
+                    // response = JSON.parse(response);
+                    $('.cards-section').html(response);
+                }
+            },
+            error: function (error) {
+                alert("Ошибка при отправке данных: ", error);
+            },
+        });
+        // document.location.href = location.pathname+'?'+$.param(data);
     });
     $(document).on('click', '#download-csv', function(e) {
-        // e.preventDefault();
-        var obj = {
+        var data = {
             colors    : selectHighlightedInputs('.check-color'),
             materials    : selectHighlightedInputs('.check-material'),
             minPrice    : $('#minPriceRange').val(),
             maxPrice    : $('#maxPriceRange').val(),
             // availability : 'sometoken'
         };
-        // $.ajax({
-        //     url: location.pathname+'/download',
-        //     method: 'POST',
-        //     data: obj,
-        // });
-
-        document.location.href = location.pathname+'/download?'+$.param(obj);
+        document.location.href = location.pathname+'/download?'+$.param(data);
     });
 })

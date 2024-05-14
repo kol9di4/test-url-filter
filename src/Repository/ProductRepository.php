@@ -19,6 +19,7 @@ class ProductRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('p')
             ->select('p.brand')
             ->distinct('p.brand')
+            ->orderBy('p.brand', 'ASC')
             ->getQuery()
             ->getResult();
     }
@@ -35,6 +36,7 @@ class ProductRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('p')
             ->select('p.color')
             ->distinct('p.color')
+            ->orderBy('p.color', 'ASC')
             ->getQuery()
             ->getResult();
     }
@@ -42,6 +44,7 @@ class ProductRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('p')
             ->select('p.material')
             ->distinct('p.material')
+            ->orderBy('p.material', 'ASC')
             ->getQuery()
             ->getResult();
     }
@@ -79,8 +82,8 @@ class ProductRepository extends ServiceEntityRepository
         if($availability !== -1){
             $query->andWhere("p.availability = $availability");
         }
-        $query->expr()->andX();
-
+//        $query->expr()->andX();
+        $query->orderBy('p.availability', 'DESC');
         return $query->getQuery()->getResult();
     }
 }
