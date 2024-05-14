@@ -23,7 +23,18 @@ $(document.body).on('change', 'input[type=checkbox][name=all]',function(){
     $('input[type=checkbox]').prop('checked',this.checked);
 });
 
+function setCheckBoxes(){
+    $('input[type=checkbox]').each(function(){
+        var text = $(this).prop('name');
+        if($('h5:contains('+text+')').length>0)
+            $(this).prop('checked', true);
+        else
+            $(this).prop('checked', false);
+    });
+}
+
 $(function (){
+    setCheckBoxes();
     $(document).on('change', '#minPriceRange', function() {
         $('label[for=minPriceRange]').html('Min: '+$(this).val()+'');
         setSliderAttr();
@@ -59,15 +70,14 @@ $(function (){
             data: data,
             success: function (response) {
                 if (response!= null){
-                    // response = JSON.parse(response);
                     $('.cards-section').html(response);
                 }
+                setCheckBoxes();
             },
             error: function (error) {
                 alert("Ошибка при отправке данных: ", error);
             },
         });
-        // document.location.href = location.pathname+'?'+$.param(data);
     });
     $(document).on('click', '#download-csv', function(e) {
         var data = {
