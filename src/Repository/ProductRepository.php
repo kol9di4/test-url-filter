@@ -22,6 +22,15 @@ class ProductRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+    public function isBrandsExists($brand) : array{
+        return $this->createQueryBuilder('p')
+            ->select('p.brand')
+            ->distinct('p.brand')
+            ->where('p.brand = :brand')
+            ->setParameter('brand', $brand)
+            ->getQuery()
+            ->getResult();
+    }
     public function findAllColors() : array{
         return $this->createQueryBuilder('p')
             ->select('p.color')

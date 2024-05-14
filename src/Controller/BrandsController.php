@@ -29,10 +29,19 @@ class BrandsController extends AbstractController
             'brands' => $brands,
         ]);
     }
+    #[Route('/catalog', name: 'app_catalog')]
+    public function catalog(): Response
+    {
+        return $this->redirectToRoute('app');
+    }
 
     #[Route('/catalog/{brand}', name: 'app_brand_full', methods: ['GET'])]
-    public function brand_full(string $brand = 'Vans', Request $request): Response
+    public function brand_full(string $brand, Request $request): Response
     {
+        $isBrandExists = count($this->productRepository->isBrandsExists($brand))>0;
+        if (!$isBrandExists) {
+            return $this->redirectToRoute('app');
+        }
         $products = (new ProductFilter($this->productRepository, $brand, $request->query->all()))
             ->getProducts();
         return $this->render('brands/brand.html.twig', [
@@ -55,23 +64,14 @@ class BrandsController extends AbstractController
         foreach ($products as $product) {
             $newArr[] = [$product->getBrand(), $product->getProduct(), $product->getPrice(), $product->getMaterial(), $product->getColor()];
         }
-        $buffer = fopen(__DIR__ . '/file.csv', 'w');
-        fputs($buffer, chr(0xEF) . chr(0xBB) . chr(0xBF));
-        foreach ($newArr as $val) {
-            fputcsv($buffer, $val, ';');
-        }
-        fclose($buffer);
-        $response = new StreamedResponse(function () {
-            // opening a stream to file with reading permissions
-            $stream = fopen(__DIR__ . '/file.csv', 'r');
-            while (!feof($stream)) {
-                echo fread($stream, 1024); // Reading by 1KB from file
-                flush(); // Forcing output to buffer
+        $response = new StreamedResponse(function () use ($newArr) {
+            $buffer = fopen('php://output', 'w');
+            fputs($buffer, chr(0xEF) . chr(0xBB) . chr(0xBF));
+            foreach($newArr as $val) {
+                fputcsv($buffer, $val, ';');
             }
-            fclose($stream); // Closing the stream
+            fclose($buffer);
         });
-
-        // Setting the response headers
         $response->headers->set('Content-Type', 'File Transfer');
         $response->headers->set('Content-Type', 'text/csv');
         $response->headers->set('Content-Disposition', 'attachment; filename="'.$brand.'.csv"');
