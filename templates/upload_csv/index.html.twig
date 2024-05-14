@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello UploadCSVController!{% endblock %}
+{% block title %}Uploader{% endblock %}
 
 {% block body %}
 <style>
@@ -8,8 +8,8 @@
     .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
 </style>
 
-<div class="example-wrapper">
-    <div class="container">
+    <div class="container vh-100 d-flex justify-content-center align-items-center flex-column">
+        <div class="display-4  mb-5">Database is empty! Upload CSV file.</div>
         {% for flashMessage in app.session.flashbag.get('error') %}
             {{ flashMessage }}
         {% endfor %}
@@ -18,5 +18,4 @@
             <input type="submit" value="Send">
         </form>
     </div>
-</div>
 {% endblock %}
