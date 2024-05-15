@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Product;
 use App\ProductFilter;
 use App\Repository\ProductRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -63,25 +64,37 @@ class BrandsController extends AbstractController
     public function download(string $brand, Request $request): StreamedResponse
     {
         $parameters = $request->query->all();
-        $products = (new ProductFilter($this->productRepository, $brand, $parameters))
-            ->getProducts();
+        $products = (new ProductFilter($this->productRepository, $brand, $parameters))->getProducts();
+        $productsForCVS = $this->normalizeProducts($products);
+        $response = $this->setResponseForDownloadFile($productsForCVS, $brand);
+        return $response;
+    }
+
+    protected function normalizeProducts(array $products) : array{
         $newArr = [];
         $newArr[] = ['Brand','Product','Price','Material','Color'];
         foreach ($products as $product) {
             $newArr[] = [$product->getBrand(), $product->getProduct(), $product->getPrice(), $product->getMaterial(), $product->getColor()];
         }
-        $response = new StreamedResponse(function () use ($newArr) {
+        return $newArr;
+    }
+    protected function setResponseForDownloadFile(array $array, string $filename) : StreamedResponse{
+        $response = new StreamedResponse(function () use ($array) {
             $buffer = fopen('php://output', 'w');
             fputs($buffer, chr(0xEF) . chr(0xBB) . chr(0xBF));
-            foreach($newArr as $val) {
+            foreach($array as $val) {
                 fputcsv($buffer, $val, ';');
             }
             fclose($buffer);
         });
+        $response = $this->setHeadersForDonwloadFile($response, $filename);
+
+        return $response;
+    }
+    private function setHeadersForDonwloadFile(StreamedResponse $response, string $filename) : StreamedResponse {
         $response->headers->set('Content-Type', 'File Transfer');
         $response->headers->set('Content-Type', 'text/csv');
-        $response->headers->set('Content-Disposition', 'attachment; filename="'.$brand.'.csv"');
-
+        $response->headers->set('Content-Disposition', 'attachment; filename="'.$filename.'.csv"');
         return $response;
     }
 }
